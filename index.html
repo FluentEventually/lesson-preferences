@@ -10,14 +10,14 @@
   html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
     font-family: Arial, sans-serif;
   }
 
   body {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    min-height: 100vh;
   }
 
   .container {
@@ -52,6 +52,7 @@
   #warning {
     color: red;
     font-size: 14px;
+    margin-top: 10px;
   }
 </style>
 </head>
@@ -60,7 +61,7 @@
 
 <div class="container">
 
-<h2>Choose Lesson Time (Total = 60 minutes)</h2>
+<h2>Please adjust your lesson time preference</h2>
 
 <form id="lessonForm" action="https://formspree.io/f/mgowvdww" method="POST">
 
@@ -80,7 +81,7 @@ Student Name:<br>
 <p>Grammar: <span id="gText">20</span> min</p>
 <input type="range" min="0" max="60" value="20" id="grammar">
 
-<p id="warning"></p>
+<p id="warning">Total must be exactly 60 minutes</p>
 
 <input type="hidden" name="Reading (minutes)" id="rVal">
 <input type="hidden" name="Speaking (minutes)" id="sVal">
@@ -134,35 +135,7 @@ const chart = new Chart(ctx, {
   }
 });
 
-function normalize(changed) {
-  let values = {
-    reading: +reading.value,
-    speaking: +speaking.value,
-    grammar: +grammar.value
-  };
-
-  let diff = TOTAL - (values.reading + values.speaking + values.grammar);
-
-  if (diff !== 0) {
-    for (let key in values) {
-      if (key !== changed) {
-        let newVal = values[key] + diff;
-        if (newVal >= 0 && newVal <= 60) {
-          values[key] = newVal;
-          break;
-        }
-      }
-    }
-  }
-
-  reading.value = values.reading;
-  speaking.value = values.speaking;
-  grammar.value = values.grammar;
-}
-
-function update(changed) {
-  normalize(changed);
-
+function update() {
   rText.textContent = reading.value;
   sText.textContent = speaking.value;
   gText.textContent = grammar.value;
@@ -174,24 +147,25 @@ function update(changed) {
   ];
   chart.update();
 
-  const total = +reading.value + +speaking.value + +grammar.value;
-
   document.getElementById('rVal').value = reading.value;
   document.getElementById('sVal').value = speaking.value;
   document.getElementById('gVal').value = grammar.value;
 
+  const total =
+    +reading.value +
+    +speaking.value +
+    +grammar.value;
+
   if (total === TOTAL) {
-    warning.textContent = '';
     submitBtn.disabled = false;
   } else {
-    warning.textContent = 'Total must be exactly 60 minutes';
     submitBtn.disabled = true;
   }
 }
 
-reading.oninput = () => update('reading');
-speaking.oninput = () => update('speaking');
-grammar.oninput = () => update('grammar');
+reading.oninput = update;
+speaking.oninput = update;
+grammar.oninput = update;
 
 document.getElementById('lessonForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -208,4 +182,3 @@ document.getElementById('lessonForm').addEventListener('submit', function(e) {
 
 </body>
 </html>
-
