@@ -1,77 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Lesson Time Preference</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<title>Lesson Time Preference</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+    margin: 20px auto;
+  }
+
+  input[type=range] {
+    width: 100%;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+
+  #message {
+    color: green;
+    font-weight: bold;
+    display: none;
+    margin-top: 15px;
+  }
+
+  #warning {
+    color: red;
+    font-size: 14px;
+  }
+</style>
 </head>
 
-<body style="font-family: Arial; text-align: center;">
-  <h2>Choose Lesson Time Distribution</h2>
+<body>
 
-  <form action="https://formspree.io/f/mgowvdww" method="POST">
-    
-    <p>
-      Student Name:<br>
-      <input type="text" name="Student Name" required>
-    </p>
+<div class="container">
 
-    <canvas id="myChart" width="300" height="300"></canvas>
+<h2>Choose Lesson Time (Total = 60 minutes)</h2>
 
-    <p>
-      Reading:
-      <input type="range" min="0" max="100" value="33" id="reading">
-    </p>
-    <p>
-      Speaking:
-      <input type="range" min="0" max="100" value="33" id="speaking">
-    </p>
-    <p>
-      Grammar:
-      <input type="range" min="0" max="100" value="34" id="grammar">
-    </p>
+<form id="lessonForm" action="https://formspree.io/f/mgowvdww" method="POST">
 
-    <input type="hidden" name="Reading" id="rVal">
-    <input type="hidden" name="Listening" id="lVal">
-    <input type="hidden" name="Grammar" id="gVal">
+<p>
+Student Name:<br>
+<input type="text" name="Student Name" required>
+</p>
 
-    <br>
-    <button type="submit">Submit</button>
-  </form>
+<canvas id="chart"></canvas>
+
+<p>Reading: <span id="rText">20</span> min</p>
+<input type="range" min="0" max="60" value="20" id="reading">
+
+<p>Speaking: <span id="sText">20</span> min</p>
+<input type="range" min="0" max="60" value="20" id="speaking">
+
+<p>Grammar: <span id="gText">20</span> min</p>
+<input type="range" min="0" max="60" value="20" id="grammar">
+
+<p id="warning"></p>
+
+<input type="hidden" name="Reading (minutes)" id="rVal">
+<input type="hidden" name="Speaking (minutes)" id="sVal">
+<input type="hidden" name="Grammar (minutes)" id="gVal">
+
+<button type="submit" id="submitBtn" disabled>Submit</button>
+
+</form>
+
+<p id="message">Thank you! Your choices were sent.</p>
+
+</div>
 
 <script>
-const ctx = document.getElementById('myChart');
+const TOTAL = 60;
+
 const reading = document.getElementById('reading');
 const speaking = document.getElementById('speaking');
 const grammar = document.getElementById('grammar');
 
+const rText = document.getElementById('rText');
+const sText = document.getElementById('sText');
+const gText = document.getElementById('gText');
+
+const warning = document.getElementById('warning');
+const submitBtn = document.getElementById('submitBtn');
+
+const ctx = document.getElementById('chart');
+
 const chart = new Chart(ctx, {
   type: 'pie',
   data: {
-    labels: ['Reading', 'Listening', 'Grammar'],
+    labels: ['Reading', 'Speaking', 'Grammar'],
     datasets: [{
-      data: [33, 33, 34],
+      data: [20, 20, 20],
       backgroundColor: ['#f44336', '#2196f3', '#4caf50']
     }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            return ctx.label + ': ' + ctx.raw + ' min';
+          }
+        }
+      }
+    }
   }
 });
 
-function updateChart() {
-  chart.data.datasets[0].data = [
-    reading.value,
-    speaking.value,
-    grammar.value
-  ];
-  chart.update();
+function normalize(changed) {
+  let values = {
+    reading: +reading.value,
+    speaking: +speaking.value,
+    grammar: +grammar.value
+  };
 
-  document.getElementById('rVal').value = reading.value + '%';
-  document.getElementById('lVal').value = speaking.value + '%';
-  document.getElementById('gVal').value = grammar.value + '%';
-}
+  let diff = TOTAL - (values.reading + values.speaking + values.grammar);
 
-reading.oninput = updateChart;
-speaking.oninput = updateChart;
-grammar.oninput = updateChart;
-</script>
+  if (diff !== 0) {
+    for (let key in values) {
+      if (key !== changed) {
+        let newVal = values[key] + diff;
+        if (newVal >= 0 && newVal <= 60) {
+          values[key] = newVal;
+          break;
+        }
+      }
+    }
+  }
 
-</body>
-</html>
+  reading.value = values.reading;
+  speaking.value = values.
