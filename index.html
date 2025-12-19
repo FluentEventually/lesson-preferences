@@ -228,7 +228,7 @@ clockIcon.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vc
 const chart = new Chart(ctx, {
   type: 'doughnut',
   data: {
-    //labels: ['Reading', 'Speaking', 'Grammar'],
+    labels: ['Reading', 'Speaking', 'Grammar'],
     datasets: [{
       data: [20, 20, 20],
       backgroundColor: ['#ff7043', '#5c6bc0', '#26a69a'],
@@ -243,6 +243,9 @@ const chart = new Chart(ctx, {
       legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 12 } } },
       tooltip: {
   callbacks: {
+    // This removes the header/title text
+    title: () => '', 
+    // This handles the content next to the colored box
     label: (ctx) => ` ${ctx.label}: ${ctx.raw} min`
   }
 }
@@ -311,6 +314,7 @@ window.onload = update;
 
 </body>
 </html>
+
 
 
 
