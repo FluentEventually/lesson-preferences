@@ -172,7 +172,7 @@
       <div class="slider-container">
         <div class="slider-header">
           <span>Reading</span>
-          <span class="time-badge"><span id="rText">20</span>m</span>
+          <span class="time-badge"><span id="rText">20</span>min</span>
         </div>
         <input type="range" min="0" max="60" value="20" id="reading">
       </div>
@@ -241,7 +241,11 @@ const chart = new Chart(ctx, {
     maintainAspectRatio: true,
     plugins: {
       legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 12 } } },
-      tooltip: { enabled: true }
+      tooltip: {
+  callbacks: {
+    label: (ctx) => ` ${ctx.label}: ${ctx.raw} min`
+  }
+}
     }
   },
   plugins: [{
@@ -278,7 +282,7 @@ function update() {
   } else {
     submitBtn.disabled = true;
     warning.style.display = 'block';
-    warning.textContent = `Total: ${total} / 60 mins`;
+    warning.textContent = `Total: ${total} / 60 min`;
   }
 }
 
@@ -307,3 +311,4 @@ window.onload = update;
 
 </body>
 </html>
+
