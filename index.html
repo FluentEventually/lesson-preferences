@@ -2,92 +2,176 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lesson Time Preference</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+  :root {
+    --primary-bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-main: #202124;
+    --text-sub: #5f6368;
+    --accent-color: #1a73e8;
+    /* Chart Colors */
+    --color-reading: #ff7043;
+    --color-speaking: #5c6bc0;
+    --color-grammar: #26a69a;
   }
 
   body {
+    background-color: var(--primary-bg);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-main);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     min-height: 100vh;
+    margin: 0;
+    padding: 20px;
   }
 
   .container {
+    background: var(--card-bg);
     width: 100%;
-    max-width: 500px;
-    padding: 20px;
-    text-align: center;
+    max-width: 450px;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   }
 
-  canvas {
-    max-width: 100%;
-    height: auto !important;
-    margin: 20px auto;
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
   }
 
-  /* -------- SLIDER BASE -------- */
+  .input-group {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-sub);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border 0.3s;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  /* -------- MODERN SLIDERS -------- */
+  .slider-container {
+    margin: 25px 0;
+    text-align: left;
+  }
+
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .slider-header span:first-child {
+    font-weight: 500;
+  }
+
+  .time-badge {
+    background: #f1f3f4;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
   input[type=range] {
     -webkit-appearance: none;
     width: 100%;
-    height: 8px;
-    border-radius: 5px;
-    background: #ddd;
+    height: 6px;
+    border-radius: 10px;
+    background: #eee;
     outline: none;
   }
 
-  /* Track colors */
-  #reading::-webkit-slider-runnable-track { background: #f44336; }
-  #speaking::-webkit-slider-runnable-track { background: #2196f3; }
-  #grammar::-webkit-slider-runnable-track { background: #4caf50; }
+  /* Unique Track Colors */
+  #reading::-webkit-slider-runnable-track { background: var(--color-reading); border-radius: 10px; }
+  #speaking::-webkit-slider-runnable-track { background: var(--color-speaking); border-radius: 10px; }
+  #grammar::-webkit-slider-runnable-track { background: var(--color-grammar); border-radius: 10px; }
 
-  #reading::-moz-range-track { background: #f44336; }
-  #speaking::-moz-range-track { background: #2196f3; }
-  #grammar::-moz-range-track { background: #4caf50; }
-
-  /* Thumb */
+  /* Modern Thumbs */
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    background: #333;
+    background: #fff;
+    border: 2px solid #555;
     cursor: pointer;
-    margin-top: -5px;
+    margin-top: -7px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
-  input[type=range]::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #333;
-    cursor: pointer;
-  }
-
+  /* -------- BUTTON & FEEDBACK -------- */
   button {
-    padding: 10px 20px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--accent-color);
+    color: white;
     font-size: 16px;
-    margin-top: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.3s, transform 0.2s;
+    margin-top: 20px;
   }
 
-  #message {
-    color: green;
-    font-weight: bold;
-    display: none;
-    margin-top: 15px;
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  button:active {
+    transform: scale(0.98);
   }
 
   #warning {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
+    color: #d93025;
+    font-size: 13px;
+    margin-top: 15px;
+    padding: 8px;
+    background: #fce8e6;
+    border-radius: 6px;
+    display: block; /* Shown by JS */
+  }
+
+  #message {
+    background: #e6f4ea;
+    color: #1e8e3e;
+    padding: 20px;
+    border-radius: 12px;
+    font-weight: 500;
+    display: none;
+  }
+
+  canvas {
+    margin-bottom: 20px;
   }
 </style>
 </head>
@@ -95,75 +179,90 @@
 <body>
 
 <div class="container">
+  <div id="formWrapper">
+    <h2>Lesson Preferences</h2>
 
-<h2>Please adjust your lesson time preference</h2>
+    <form id="lessonForm" action="https://formspree.io/f/mgowvdww" method="POST">
+      <div class="input-group">
+        <label>STUDENT NAME</label>
+        <input type="text" name="Student Name" placeholder="Enter your name" required>
+      </div>
 
-<form id="lessonForm" action="https://formspree.io/f/mgowvdww" method="POST">
+      <canvas id="chart"></canvas>
 
-<p>
-Student Name:<br>
-<input type="text" name="Student Name" required>
-</p>
+      <div class="slider-container">
+        <div class="slider-header">
+          <span>Reading</span>
+          <span class="time-badge"><span id="rText">20</span> min</span>
+        </div>
+        <input type="range" min="0" max="60" value="20" id="reading">
+      </div>
 
-<canvas id="chart"></canvas>
+      <div class="slider-container">
+        <div class="slider-header">
+          <span>Speaking</span>
+          <span class="time-badge"><span id="sText">20</span> min</span>
+        </div>
+        <input type="range" min="0" max="60" value="20" id="speaking">
+      </div>
 
-<p>Reading: <span id="rText">20</span> min</p>
-<input type="range" min="0" max="60" value="20" id="reading">
+      <div class="slider-container">
+        <div class="slider-header">
+          <span>Grammar</span>
+          <span class="time-badge"><span id="gText">20</span> min</span>
+        </div>
+        <input type="range" min="0" max="60" value="20" id="grammar">
+      </div>
 
-<p>Speaking: <span id="sText">20</span> min</p>
-<input type="range" min="0" max="60" value="20" id="speaking">
+      <div id="warning">⚠️ Total must be exactly 60 minutes</div>
 
-<p>Grammar: <span id="gText">20</span> min</p>
-<input type="range" min="0" max="60" value="20" id="grammar">
+      <input type="hidden" name="Reading (minutes)" id="rVal">
+      <input type="hidden" name="Speaking (minutes)" id="sVal">
+      <input type="hidden" name="Grammar (minutes)" id="gVal">
 
-<p id="warning">Total must be exactly 60 minutes</p>
+      <button type="submit" id="submitBtn" disabled>Send Preferences</button>
+    </form>
+  </div>
 
-<!-- Hidden values for email -->
-<input type="hidden" name="Reading (minutes)" id="rVal">
-<input type="hidden" name="Speaking (minutes)" id="sVal">
-<input type="hidden" name="Grammar (minutes)" id="gVal">
-
-
-<button type="submit" id="submitBtn" disabled>Submit</button>
-
-</form>
-
-<p id="message">Thank you! Your choices were sent.</p>
-
+  <div id="message">
+    <h3>Sent! ✅</h3>
+    <p>Your lesson plan has been saved successfully.</p>
+  </div>
 </div>
 
 <script>
 const TOTAL = 60;
-
 const reading = document.getElementById('reading');
 const speaking = document.getElementById('speaking');
 const grammar = document.getElementById('grammar');
-
 const rText = document.getElementById('rText');
 const sText = document.getElementById('sText');
 const gText = document.getElementById('gText');
-
 const submitBtn = document.getElementById('submitBtn');
-
+const warning = document.getElementById('warning');
 const ctx = document.getElementById('chart');
 
+// Professional Chart Setup
 const chart = new Chart(ctx, {
-  type: 'pie',
+  type: 'doughnut', // Doughnut is more modern than Pie
   data: {
     labels: ['Reading', 'Speaking', 'Grammar'],
     datasets: [{
       data: [20, 20, 20],
-      backgroundColor: ['#f44336', '#2196f3', '#4caf50']
+      backgroundColor: ['#ff7043', '#5c6bc0', '#26a69a'],
+      borderWidth: 0,
+      hoverOffset: 10
     }]
   },
   options: {
+    cutout: '70%', // Makes the "donut" ring thinner/cleaner
     responsive: true,
-    maintainAspectRatio: true,
     plugins: {
+      legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
       tooltip: {
-        callbacks: {
-          label: ctx => `${ctx.label}: ${ctx.raw} min`
-        }
+        backgroundColor: '#3c4043',
+        padding: 12,
+        callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} min` }
       }
     }
   }
@@ -174,26 +273,23 @@ function update() {
   sText.textContent = speaking.value;
   gText.textContent = grammar.value;
 
-  chart.data.datasets[0].data = [
-    reading.value,
-    speaking.value,
-    grammar.value
-  ];
+  chart.data.datasets[0].data = [reading.value, speaking.value, grammar.value];
   chart.update();
 
   document.getElementById('rVal').value = reading.value;
   document.getElementById('sVal').value = speaking.value;
   document.getElementById('gVal').value = grammar.value;
 
-  // Save chart image for email
-  // document.getElementById('chartImage').value = chart.toBase64Image();
+  const total = +reading.value + +speaking.value + +grammar.value;
 
-  const total =
-    +reading.value +
-    +speaking.value +
-    +grammar.value;
-
-  submitBtn.disabled = (total !== TOTAL);
+  if (total === TOTAL) {
+    submitBtn.disabled = false;
+    warning.style.display = 'none';
+  } else {
+    submitBtn.disabled = true;
+    warning.style.display = 'block';
+    warning.textContent = `⚠️ Current total: ${total} mins. Adjust to reach 60.`;
+  }
 }
 
 reading.oninput = update;
@@ -202,18 +298,21 @@ grammar.oninput = update;
 
 document.getElementById('lessonForm').addEventListener('submit', function(e) {
   e.preventDefault();
+  submitBtn.innerText = "Sending...";
+  
   fetch(this.action, {
     method: 'POST',
     body: new FormData(this),
     headers: { 'Accept': 'application/json' }
   }).then(() => {
-    this.style.display = 'none';
+    document.getElementById('formWrapper').style.display = 'none';
     document.getElementById('message').style.display = 'block';
   });
 });
+
+// Initialize values
+update();
 </script>
 
 </body>
 </html>
-
-
