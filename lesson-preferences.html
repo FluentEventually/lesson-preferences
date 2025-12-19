@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lesson Time Preference</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body style="font-family: Arial; text-align: center;">
+  <h2>Choose Lesson Time Distribution</h2>
+
+  <form action="https://formspree.io/f/mgowvdww" method="POST">
+    
+    <p>
+      Student Name:<br>
+      <input type="text" name="Student Name" required>
+    </p>
+
+    <canvas id="myChart" width="300" height="300"></canvas>
+
+    <p>
+      Reading:
+      <input type="range" min="0" max="100" value="33" id="reading">
+    </p>
+    <p>
+      Speaking:
+      <input type="range" min="0" max="100" value="33" id="speaking">
+    </p>
+    <p>
+      Grammar:
+      <input type="range" min="0" max="100" value="34" id="grammar">
+    </p>
+
+    <input type="hidden" name="Reading" id="rVal">
+    <input type="hidden" name="Listening" id="lVal">
+    <input type="hidden" name="Grammar" id="gVal">
+
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+
+<script>
+const ctx = document.getElementById('myChart');
+const reading = document.getElementById('reading');
+const speaking = document.getElementById('speaking');
+const grammar = document.getElementById('grammar');
+
+const chart = new Chart(ctx, {
+  type: 'pie',
+  data: {
+    labels: ['Reading', 'Listening', 'Grammar'],
+    datasets: [{
+      data: [33, 33, 34],
+      backgroundColor: ['#f44336', '#2196f3', '#4caf50']
+    }]
+  }
+});
+
+function updateChart() {
+  chart.data.datasets[0].data = [
+    reading.value,
+    speaking.value,
+    grammar.value
+  ];
+  chart.update();
+
+  document.getElementById('rVal').value = reading.value + '%';
+  document.getElementById('lVal').value = speaking.value + '%';
+  document.getElementById('gVal').value = grammar.value + '%';
+}
+
+reading.oninput = updateChart;
+speaking.oninput = updateChart;
+grammar.oninput = updateChart;
+</script>
+
+</body>
+</html>
