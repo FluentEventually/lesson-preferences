@@ -62,7 +62,7 @@
 
 <h2>Choose Lesson Time (Total = 60 minutes)</h2>
 
-<form id="lessonForm" action="https://formspree.io/f/mgowvdww" method="POST">
+<form id="lessonForm" action="PASTE_YOUR_FORMSPREE_URL_HERE" method="POST">
 
 <p>
 Student Name:<br>
@@ -156,4 +156,55 @@ function normalize(changed) {
   }
 
   reading.value = values.reading;
-  speaking.value = values.
+  speaking.value = values.speaking;
+  grammar.value = values.grammar;
+}
+
+function update(changed) {
+  normalize(changed);
+
+  rText.textContent = reading.value;
+  sText.textContent = speaking.value;
+  gText.textContent = grammar.value;
+
+  chart.data.datasets[0].data = [
+    reading.value,
+    speaking.value,
+    grammar.value
+  ];
+  chart.update();
+
+  const total = +reading.value + +speaking.value + +grammar.value;
+
+  document.getElementById('rVal').value = reading.value;
+  document.getElementById('sVal').value = speaking.value;
+  document.getElementById('gVal').value = grammar.value;
+
+  if (total === TOTAL) {
+    warning.textContent = '';
+    submitBtn.disabled = false;
+  } else {
+    warning.textContent = 'Total must be exactly 60 minutes';
+    submitBtn.disabled = true;
+  }
+}
+
+reading.oninput = () => update('reading');
+speaking.oninput = () => update('speaking');
+grammar.oninput = () => update('grammar');
+
+document.getElementById('lessonForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  fetch(this.action, {
+    method: 'POST',
+    body: new FormData(this),
+    headers: { 'Accept': 'application/json' }
+  }).then(() => {
+    this.style.display = 'none';
+    document.getElementById('message').style.display = 'block';
+  });
+});
+</script>
+
+</body>
+</html>
