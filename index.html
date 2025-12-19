@@ -264,6 +264,10 @@ const chart = new Chart(ctx, {
         padding: 12,
         callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} min` }
       }
+  centerText: {
+    display: true,
+    text: "60 min"
+  }
     }
   }
 });
@@ -316,4 +320,5 @@ update();
 
 </body>
 </html>
+
 
